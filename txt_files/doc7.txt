@@ -1,0 +1,1 @@
+High frequency words appear often in common text. We track the frequency of a keyword to determine which file is most relevant. A higher frequency usually means a better match

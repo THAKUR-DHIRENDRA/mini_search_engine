@@ -1,0 +1,1 @@
+A vector is a dynamic array in the standard library. We use a vector to store our search results before sorting them. The vector class is very versatile in modern programming

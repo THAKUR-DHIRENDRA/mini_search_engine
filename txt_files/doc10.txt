@@ -1,0 +1,1 @@
+The algorithms used in modern computing are vast. Every single algorithm must be efficient to handle large datasets. When you write an algorithm, you consider time complexity first.

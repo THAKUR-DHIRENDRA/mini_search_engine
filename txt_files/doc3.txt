@@ -1,0 +1,1 @@
+Indexing files once at the start saves time later. When we index these files, we create a map of the entire directory. This allows us to search files almost instantly.

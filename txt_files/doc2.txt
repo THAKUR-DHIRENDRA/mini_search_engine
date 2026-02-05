@@ -1,0 +1,1 @@
+Data structures are the foundation of software. Without organized data, an algorithm cannot function properly. We must store data in a way that allows for quick retrieval.

@@ -8,21 +8,18 @@
 using namespace std;
 namespace fs = std::filesystem;
 
-bool keyfinder(string line, string key) 
-{
-    int p1 = 0, p2 = 0;
-    while (p1 < line.size()) 
-    {
-        if (line[p1] == key[p2])
-            p1++, p2++;
-        else 
-        {
-            // Logic fix: reset p1 to the next char after the start of the previous                   match attempt
-            p1 = p1 - p2 + 1; 
-            p2 = 0;
-        }
+int keyfinder(string line, string key) {
+    int count = 0;
+    // Start searching from the beginning (index 0)
+    size_t pos = line.find(key, 0); 
+
+    while (pos != string::npos) {
+        count++;
+        // Move the 'pos' to the index right after the current match
+        // This prevents the loop from finding the same word forever
+        pos = line.find(key, pos + key.length());
     }
-    return p2 == key.size();
+    return count;
 }
 
 void filesfinder(string folderpath, vector<pair<string,int>>& result, string key) 
@@ -51,17 +48,14 @@ void filesfinder(string folderpath, vector<pair<string,int>>& result, string key
 
         while (getline(reader, line)) 
         {
-            if (keyfinder(line, key)) 
-            {
-                count++;
-            }
+            count+= keyfinder(line, key);
         }
 
         reader.close(); // Good practice to close the file
 
         if (count) 
         {
-            // Store the filename as a string
+            // Store the filename and its count
             result.push_back({file.path().filename().string(),count});
         }
     }

@@ -1,0 +1,1 @@
+Logic and problem solving go hand in hand. Every coding problem is just a puzzle waiting for a solution. Once you solve a problem, you can optimize the code for better performance.
