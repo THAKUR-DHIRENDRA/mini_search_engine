@@ -1,1 +1,1 @@
-High frequency words appear often in common text. We track the frequency of a keyword to determine which file is most relevant. A higher frequency usually means a better match
+Problem-solving is the core skill of a software engineer. By solving problems on LeetCode, you master the data structures needed for complex systems. Consistent problem-solving practice leads to a better understanding of how an algorithm can be optimized. Every problem-solving session on LeetCode strengthens your coding logic.

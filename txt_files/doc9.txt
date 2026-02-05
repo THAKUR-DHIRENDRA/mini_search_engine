@@ -1,1 +1,1 @@
-The inverted index is a clever way to organize words. By using an inverted structure, we map words directly to their document locations. This makes the inverted lookup very efficient.
+Documentation is often the most overlooked part of software engineering. High-quality documentation explains the logic behind your algorithm and how to use the software. For your GitHub repository, documentation is the key to showing recruiters your project's value. Never finish a project without thorough documentation.

@@ -4,70 +4,57 @@
 #include<algorithm>
 #include<vector>
 #include<filesystem>
-
+#include<bits/stdc++.h>
 using namespace std;
 namespace fs = std::filesystem;
 
-int keyfinder(string line, string key) {
-    int count = 0;
-    // Start searching from the beginning (index 0)
-    size_t pos = line.find(key, 0); 
 
-    while (pos != string::npos) {
-        count++;
-        // Move the 'pos' to the index right after the current match
-        // This prevents the loop from finding the same word forever
-        pos = line.find(key, pos + key.length());
-    }
-    return count;
+//function to clean the word
+void wordcleaner(string &word)
+{
+    string cleaned="";
+    for(char ch:word)
+        {
+            if(!ispunct(ch))
+                cleaned+=ch;
+        }
+    word=cleaned;
 }
 
-void filesfinder(string folderpath, vector<pair<string,int>>& result, string key) 
+//function to convert to lowercase
+void tolowercase(string &word)
 {
-    // Standard check to ensure the folder exists
-    if (!fs::exists(folderpath)) 
-    {
-        cout << "Folder not found: " << folderpath << endl;
-        return;
-    }
+    transform(word.begin(),word.end(),word.begin(), ::tolower);
+}
 
-    //Results of your code will appear here when 
-
+void mapbuilder(string folderpath,unordered_map<string,unordered_map<string,int>>&invertedindex) 
+{
     for (const auto& file : fs::directory_iterator(folderpath)) 
     {
         // FIX: Pass the actual file path object, not a string literal in quotes
         ifstream reader(file.path()); 
-        int count=0;
-        string line;
         if (!reader.is_open()) 
         {
             // Use 'continue' instead of 'break' so it tries the next file if one fails
             cout << "File could not be opened: " << file.path().filename() << endl;
             continue; 
         }
-
+        string line;
         while (getline(reader, line)) 
         {
-            count+= keyfinder(line, key);
+           string word;
+            stringstream ss(line);
+            while(ss>>word)
+                {
+                    wordcleaner(word);
+                    tolowercase(word);
+                    if(!word.empty())
+                    invertedindex[word][file.path().filename().string()]++;
+                }
         }
 
         reader.close(); // Good practice to close the file
-
-        if (count) 
-        {
-            // Store the filename and its count
-            result.push_back({file.path().filename().string(),count});
-        }
     }
-
-
-
-    //now sort the vector based on count in decreasing order
-    sort(result.begin(), result.end(), [](const pair<string, int>& a, const pair<string, int>& b) 
-    {
-        return a.second > b.second; // Primary sort: highest frequency
-    });
-    
 }
 
 int main() 
@@ -75,26 +62,27 @@ int main()
     string key;
     cout << "Enter search key: ";
     cin >> key;
-
-    vector <pair<string,int>> result;
+    unordered_map<string,unordered_map<string,int>>invertedindex;
     // Ensure this folder exists in your project directory
     string folderpath = "txt_files"; 
-
-    filesfinder(folderpath,result,key);
-
-    // Print the results so you know it worked!
-    if (result.empty()) 
+    mapbuilder(folderpath,invertedindex);
+    if(invertedindex.size()==0)
+        cout<<"The files did not contain any texts\n";
+    else
     {
-        cout << "No matches found." << endl;
-    } 
-    else 
-    {
-        cout << "Key found in: " << endl;
-        for (const auto& filename : result) 
+        auto it=invertedindex.find(key);
+        if(it!=invertedindex.end())
         {
-            cout << "- " << filename.first<<" "<<filename.second<<endl;
+            cout<<"Here are all the file tha contains the word: "<<key<<endl;
+            for(const auto& fileEntry:it->second)
+                {
+                    cout<<" Filename-> "<<fileEntry.first<<" Frequencies : "<<fileEntry.second<<endl;
+                }
         }
-    }
-
+        else
+        {
+            cout<<"There are no files containing this word!!"<<endl;
+        }
+    }     
     return 0;
 }

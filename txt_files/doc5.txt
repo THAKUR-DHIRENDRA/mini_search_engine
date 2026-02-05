@@ -1,1 +1,1 @@
-Sorting results is the final step for a user. We display the results in a list so they are easy to read. High-quality results are what keep users coming back to an engine engine engine.
+Computer science bridges the gap between hardware and software. While software provides the logic, the hardware provides the power. Understanding how an algorithm interacts with memory is vital for performance. Every student must learn how software instructions are executed by the CPU. At KIET, we explore both the abstract software and the physical hardware.

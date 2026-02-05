@@ -1,1 +1,1 @@
-Logic and problem solving go hand in hand. Every coding problem is just a puzzle waiting for a solution. Once you solve a problem, you can optimize the code for better performance.
+The MacBook is an iconic tool for any modern developer. Its Unix-based environment makes it perfect for C++ and JavaScript development. Using a MacBook allows for seamless integration of terminal tools and software compilers. For a student, a MacBook represents a reliable platform for building a search engine.

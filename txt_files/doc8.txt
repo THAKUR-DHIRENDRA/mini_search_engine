@@ -1,1 +1,1 @@
-Programming in C++ offers great control over memory. Many high-performance systems are built using C++ because of its speed. Learning C++ is essential for systems engineering
+Software development follows a strict lifecycle. From the initial coding of the logic to the final testing phase, development is an iterative process. Every development stage requires careful thought. We are currently in the development phase of our indexing system. Good development leads to robust software.
