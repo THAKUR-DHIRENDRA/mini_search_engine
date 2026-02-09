@@ -19,6 +19,7 @@ private:
     unordered_map<string, int> doclengths;
     double avgDocSize = 0; // New: To provide context for QPS
 
+//--------------------------------------------------------------------------------------------------------
     void wordcleaner(string &word)
     {
         string cleaned = "";
@@ -29,54 +30,148 @@ private:
         }
         word = cleaned;
     }
-
+//--------------------------------------------------------------------------------------------------------
     void tolowercase(string &word)
     {
         transform(word.begin(), word.end(), word.begin(), ::tolower);
     }
 
+//--------------------------------------------------------------------------------------------------------
+    //saving into file
+void map_to_file()
+{
+     ofstream writer("index.txt");
+    if(!writer.is_open())
+        cout<<"index.txt file could not be opened while performing save to files function"<<endl;
+    else
+    {
+        
+        //inserting keyword count filename frequency
+        for(const auto& outermap:invertedindex)
+            {
+                writer<<outermap.first<<" "<<outermap.second.size();
+                for(const auto& innermap:outermap.second)
+                    {
+                        writer<<" "<<innermap.first<<" "<<innermap.second;
+                    }
+                writer<<endl;
+            }
+        //now inserting sentinel logic word $$$DOC_DATA$$$
+        writer<<"$$$DOC_DATA$$$"<<endl;
+        //inserting doclengths [filename totalwords] in it
+        for(const auto& dt:doclengths)
+            {
+                writer<<dt.first<<" "<<dt.second<<endl;
+            }
+    }
+    writer.close();
+}
+
+//--------------------------------------------------------------------------------------------------------
+//now this function loads files data to unordered_map both inverted index and doclengths
+void file_to_map()
+{
+    ifstream reader("index.txt");
+    if(!reader.is_open())
+        cout<<"The index.txt file could not be opened while perfoming load to map function"<<endl;
+    else
+    {
+        string word;
+        while(reader>>word)
+            {
+                if(word=="$$$DOC_DATA$$$")
+                    break;
+                int relatedfiles;
+                reader>>relatedfiles;
+                for(int i=0;i<relatedfiles;i++)
+                    {
+                        int frequency;
+                        string filename;
+                        reader>>filename>>frequency;
+                        invertedindex[word][filename]=frequency;
+                    }
+            }
+        
+        //now move to build doclength map
+        string filename;
+        int totalwords;
+        while(reader>>filename>>totalwords)
+        doclengths[filename]=totalwords;
+    }
+    reader.close();
+}
+//--------------------------------------------------------------------------------------------------------
 public:
     SearchEngine(string folderpath)
     {
-        int totalWordsAcrossAllDocs = 0;
-        int docCount = 0;
-
-        for (const auto &file : fs::directory_iterator(folderpath))
+       auto start=chrono::steady_clock::now();
+        if(fs::exists("index.txt"))
         {
-            ifstream reader(file.path());
-            if (!reader.is_open())
-                continue;
-
-            string filename = file.path().filename().string();
-            string line;
-            int count = 0;
-            while (getline(reader, line))
+            cout << "[SYSTEM] Index found. Loading from disk..." << endl;
+            file_to_map();
+            double total = 0;
+            for (auto const& [name, len] : doclengths) 
+                total += len;
+            if (!doclengths.empty()) 
+                avgDocSize = total / doclengths.size();
+        }
+        else
+        {
+            cout << "[SYSTEM] No index. Building from folder: " << folderpath << endl;
+            int totalWordsAcrossAllDocs = 0;
+            int docCount = 0;
+            for (const auto &file : fs::directory_iterator(folderpath))
             {
-                string word;
-                stringstream ss(line);
-                while (ss >> word)
+                ifstream reader(file.path());
+                if (!reader.is_open())
+                    continue;
+
+                string filename = file.path().filename().string();
+                string line;
+                int count = 0;
+                while (getline(reader, line))
                 {
-                    wordcleaner(word);
-                    tolowercase(word);
-                    if (!word.empty())
+                    string word;
+                    stringstream ss(line);
+                    while (ss >> word)
                     {
-                        count++;
-                        invertedindex[word][filename]++;
+                        wordcleaner(word);
+                        tolowercase(word);
+                        if (!word.empty())
+                        {
+                            count++;
+                            invertedindex[word][filename]++;
+                        }
                     }
                 }
+                doclengths[filename] = count;
+                totalWordsAcrossAllDocs += count;
+                docCount++;
+                reader.close();
+                
             }
-            doclengths[filename] = count;
-            totalWordsAcrossAllDocs += count;
-            docCount++;
-            reader.close();
+            if (docCount > 0) 
+                avgDocSize = (double)totalWordsAcrossAllDocs / docCount;
+            map_to_file();
+            cout << "[SYSTEM] Index built and saved successfully." << endl;
         }
-        if (docCount > 0) avgDocSize = (double)totalWordsAcrossAllDocs / docCount;
+
+        auto end=chrono::steady_clock::now();
+        auto duration=chrono::duration_cast<chrono::milliseconds>(end-start).count();
+        cout << "[PERF] Engine Ready in: " << duration << " ms" << endl;
+        cout << "-------------------------------------------------" << endl;
     }
 
     // Getter for Result Analysis
-    double getAvgDocSize() { return avgDocSize; }
-    int getIndexSize() { return invertedindex.size(); }
-
+    double getAvgDocSize() 
+    { 
+    return avgDocSize; 
+    }
+    int getIndexSize() 
+    { 
+        return invertedindex.size(); 
+    }
+//--------------------------------------------------------------------------------------------------------
     vector<pair<string, double>> search(string key)
     {
         vector<pair<string, double>> ranks;
@@ -111,6 +206,7 @@ public:
     }
 };
 
+//--------------------------------------------------------------------------------------------------------
 class EngineTester
 {
 public:
@@ -128,7 +224,7 @@ public:
         {"longstringlongstringlongstring", ""}, {"mix3d", "str1ng"},
         {"重复", "数据"}, {"NULL", "nullptr"}, {"end", ""}   
     };
-
+//--------------------------------------------------------------------------------------------------------
     bool testAccuracy(SearchEngine& myEngine)
     {
         for(int i=0;i<7;i++)
@@ -139,7 +235,7 @@ public:
         }
         return true;
     }
-
+//--------------------------------------------------------------------------------------------------------
     bool testEdgeCases(SearchEngine& myEngine)
     {
         for(int i=7;i<testdata.size();i++)
@@ -150,7 +246,7 @@ public:
         }
         return true;
     }
-
+//--------------------------------------------------------------------------------------------------------
     double testPerformance(SearchEngine& myEngine)
     {
         string query = "data";
@@ -158,7 +254,8 @@ public:
         myEngine.search(query); 
 
         auto start = std::chrono::steady_clock::now();
-        for (int i = 0; i < iterations; ++i) {
+        for (int i = 0; i < iterations; ++i) 
+        {
             auto result = myEngine.search(query); 
         }
         auto end = std::chrono::steady_clock::now();
@@ -166,14 +263,15 @@ public:
         auto total_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         return (double)total_ms / iterations;
     }
-
+//--------------------------------------------------------------------------------------------------------
     double testStress(SearchEngine& myEngine)
     {
         string stressQuery = testdata[0].first;
         int stressIterations = 100000;
 
         auto start = std::chrono::steady_clock::now();
-        for(int i = 0; i < stressIterations; i++) {
+        for(int i = 0; i < stressIterations; i++) 
+        {
             myEngine.search(stressQuery);
         }
         auto end = std::chrono::steady_clock::now();
@@ -181,7 +279,7 @@ public:
         auto total_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         return (double)stressIterations / (total_ms / 1000.0);
     }
-
+//--------------------------------------------------------------------------------------------------------
     void runAllTests(SearchEngine& myEngine) {
         // 
 
