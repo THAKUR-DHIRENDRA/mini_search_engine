@@ -1,277 +1,272 @@
-careful 1 doc8.txt 1
-iterative 1 doc8.txt 1
-testing 1 doc8.txt 1
-initial 1 doc8.txt 1
-from 1 doc8.txt 1
-strict 1 doc8.txt 1
-both 1 doc5.txt 1
-explore 1 doc5.txt 1
-instructions 1 doc5.txt 1
-coded 1 doc5.txt 1
-power 1 doc5.txt 1
-hardware 1 doc5.txt 3
-between 1 doc5.txt 1
-gap 1 doc5.txt 1
-bridges 1 doc5.txt 1
-abstract 1 doc5.txt 1
-instruction 1 doc1.txt 1
-essential 1 doc1.txt 1
-stage 1 doc8.txt 1
-analyze 1 doc1.txt 1
-slow 1 doc1.txt 1
-entries 1 doc1.txt 1
-keyword 1 doc1.txt 1
 matching 1 doc1.txt 1
-final 1 doc8.txt 1
-heart 1 doc1.txt 1
-at 2 doc5.txt 1 doc1.txt 1
-follows 2 doc8.txt 1 doc1.txt 2
+keyword 1 doc1.txt 1
 highfrequency 1 doc1.txt 1
+slow 1 doc1.txt 1
+essential 1 doc1.txt 1
+entries 1 doc1.txt 1
 speed 1 doc1.txt 1
-science 2 doc5.txt 1 doc1.txt 1
-computer 2 doc5.txt 1 doc1.txt 1
-process 2 doc8.txt 1 doc1.txt 2
-stepbystep 1 doc1.txt 1
-thakur 1 doc9.txt 1
+use 2 doc3.txt 1 doc9.txt 1
+determines 1 doc3.txt 1
+tfidf 1 doc10.txt 1
 vital 1 doc5.txt 1
 finish 1 doc9.txt 1
-never 1 doc9.txt 1
-recruiters 1 doc9.txt 1
+science 2 doc1.txt 1 doc5.txt 1
+power 1 doc5.txt 1
+culmination 1 doc10.txt 1
+explore 1 doc5.txt 1
+hardware 1 doc5.txt 3
 programs 1 doc5.txt 1
 showing 1 doc9.txt 1
-repository 1 doc9.txt 1
-millions 1 doc1.txt 1
-github 1 doc9.txt 1
-explains 1 doc9.txt 1
-part 1 doc9.txt 1
-points 1 doc1.txt 1
-overlooked 1 doc9.txt 1
-often 2 doc1.txt 1 doc9.txt 1
-documentation 1 doc9.txt 4
-journey 1 doc10.txt 1
-most 1 doc9.txt 1
-learning 2 doc1.txt 1 doc10.txt 1
-culmination 1 doc10.txt 1
+complex 1 doc7.txt 1
+thorough 1 doc9.txt 1
 relevance 1 doc10.txt 1
-dsa 1 doc10.txt 1
-files 1 doc10.txt 1
-tfidf 1 doc10.txt 1
-mini 1 doc10.txt 1
+journey 1 doc10.txt 1
+at 1 doc5.txt 1
+gap 1 doc5.txt 1
+solve 1 doc1.txt 1
+has 1 doc2.txt 1
 build 1 doc10.txt 1
 goal 1 doc10.txt 1
-your 3 doc1.txt 2 doc9.txt 3 doc7.txt 1
 strengthens 1 doc7.txt 1
+your 3 doc1.txt 2 doc7.txt 1 doc9.txt 3
+session 1 doc7.txt 1
 provides 1 doc5.txt 2
 highquality 1 doc9.txt 1
-session 1 doc7.txt 1
-discuss 1 doc1.txt 1
-leads 2 doc8.txt 1 doc7.txt 1
-consistent 1 doc7.txt 1
 systems 1 doc7.txt 1
-thorough 1 doc9.txt 1
-complex 1 doc7.txt 1
 needed 1 doc7.txt 1
+discuss 1 doc1.txt 1
+leads 2 doc7.txt 1 doc8.txt 1
+consistent 1 doc7.txt 1
 master 1 doc7.txt 1
 leetcode 1 doc7.txt 2
+using 1 doc6.txt 1
+its 3 doc1.txt 1 doc6.txt 1 doc2.txt 1
+on 2 doc1.txt 1 doc7.txt 2
+that 2 doc10.txt 1 doc2.txt 1
 problems 1 doc7.txt 1
 engineer 1 doc7.txt 1
-skill 1 doc7.txt 1
+cpu 1 doc5.txt 1
+search 5 doc1.txt 2 doc10.txt 4 doc6.txt 1 doc3.txt 1 doc2.txt 1
+computer 2 doc1.txt 1 doc5.txt 1
+instructions 2 doc1.txt 1 doc5.txt 1
 core 1 doc7.txt 1
-problemsolving 1 doc7.txt 3
-compilers 1 doc6.txt 1
-executed 1 doc5.txt 1
-tools 1 doc6.txt 1
-integration 1 doc6.txt 1
-seamless 1 doc6.txt 1
-allows 1 doc6.txt 1
-using 1 doc6.txt 1
-javascript 1 doc6.txt 1
-phase 1 doc8.txt 2
-macbook 1 doc6.txt 3
-many 1 doc3.txt 1
-storing 1 doc2.txt 1
-we 5 doc8.txt 1 doc1.txt 2 doc3.txt 1 doc5.txt 1 doc2.txt 2
-interacts 1 doc5.txt 1
-lowercase 1 doc2.txt 1
-clean 1 doc2.txt 1
-better 2 doc7.txt 1 doc4.txt 1
-on 2 doc1.txt 1 doc7.txt 2
-its 3 doc1.txt 1 doc6.txt 1 doc2.txt 1
-that 2 doc10.txt 1 doc2.txt 1
+with 1 doc5.txt 1
+by 4 doc10.txt 1 doc7.txt 1 doc5.txt 1 doc2.txt 2
+specialized 1 doc2.txt 1
+solving 1 doc7.txt 1
 efficient 1 doc1.txt 1
-behind 1 doc9.txt 1
 efficiently 2 doc10.txt 1 doc2.txt 1
-the 9 doc9.txt 4 doc8.txt 4 doc10.txt 1 doc6.txt 1 doc4.txt 1 doc7.txt 2 doc3.txt 3 doc5.txt 7 doc2.txt 3
+behind 1 doc9.txt 1
+coded 1 doc5.txt 1
+macbook 1 doc6.txt 3
+phase 1 doc8.txt 2
+modern 2 doc6.txt 1 doc2.txt 1
+will 1 doc1.txt 1
+time 1 doc3.txt 1
+challenge 1 doc2.txt 1
 piece 1 doc2.txt 1
-converting 1 doc2.txt 1
+abstract 1 doc5.txt 1
 user 2 doc10.txt 1 doc4.txt 1
-every 7 doc8.txt 1 doc1.txt 3 doc10.txt 1 doc7.txt 1 doc3.txt 1 doc5.txt 1 doc2.txt 1
-into 2 doc4.txt 1 doc2.txt 1
-engineering 2 doc9.txt 1 doc2.txt 1
-techniques 1 doc2.txt 1
+every 7 doc1.txt 3 doc10.txt 1 doc8.txt 1 doc7.txt 1 doc3.txt 1 doc5.txt 1 doc2.txt 1
 so 1 doc3.txt 1
 structures 2 doc7.txt 1 doc2.txt 1
 access 1 doc3.txt 1
 memory 2 doc5.txt 1 doc3.txt 1
-modern 2 doc6.txt 1 doc2.txt 1
-will 1 doc1.txt 1
-challenge 1 doc2.txt 1
-time 1 doc3.txt 1
-cpu 1 doc5.txt 1
-search 5 doc1.txt 2 doc10.txt 4 doc6.txt 1 doc3.txt 1 doc2.txt 1
-solving 1 doc7.txt 1
-specialized 1 doc2.txt 1
-solve 1 doc1.txt 1
-has 1 doc2.txt 1
-with 1 doc5.txt 1
-by 4 doc10.txt 1 doc7.txt 1 doc5.txt 1 doc2.txt 2
-developer 2 doc1.txt 1 doc6.txt 1
-performance 1 doc5.txt 1
-a 9 doc9.txt 1 doc8.txt 1 doc1.txt 3 doc10.txt 1 doc6.txt 5 doc4.txt 2 doc7.txt 2 doc3.txt 3 doc2.txt 2
-removing 1 doc2.txt 1
-load 1 doc2.txt 1
-without 3 doc9.txt 1 doc4.txt 1 doc2.txt 1
-various 1 doc2.txt 1
-structure 1 doc3.txt 5
-learn 1 doc5.txt 1
-set 1 doc1.txt 1
-software 7 doc8.txt 3 doc9.txt 2 doc7.txt 1 doc6.txt 1 doc4.txt 1 doc5.txt 2 doc2.txt 2
-are 4 doc8.txt 1 doc5.txt 1 doc4.txt 1 doc3.txt 1
-indexing 1 doc8.txt 1
-kiet 1 doc5.txt 1
-in 4 doc8.txt 1 doc1.txt 1 doc4.txt 1 doc2.txt 2
-and 7 doc9.txt 1 doc1.txt 2 doc10.txt 1 doc6.txt 2 doc4.txt 1 doc5.txt 2 doc2.txt 1
-faster 1 doc2.txt 1
-lifecycle 1 doc8.txt 1
-reliable 1 doc6.txt 1
-constant 1 doc3.txt 1
-big 1 doc2.txt 1
-logic 6 doc5.txt 1 doc9.txt 1 doc8.txt 1 doc10.txt 1 doc7.txt 1 doc4.txt 5
-any 1 doc6.txt 1
-complexity 2 doc1.txt 1 doc3.txt 1
-practice 1 doc7.txt 1
-code 1 doc4.txt 1
-system 2 doc8.txt 1 doc2.txt 1
-how 5 doc5.txt 2 doc1.txt 1 doc9.txt 1 doc7.txt 1 doc4.txt 1
-information 1 doc3.txt 1
+must 4 doc5.txt 1 doc1.txt 1 doc10.txt 1 doc3.txt 1
+bridges 1 doc5.txt 1
+both 1 doc5.txt 1
+executed 1 doc5.txt 1
+tools 1 doc6.txt 1
+into 2 doc4.txt 1 doc2.txt 1
+problemsolving 1 doc7.txt 3
+better 2 doc7.txt 1 doc4.txt 1
+clean 1 doc2.txt 1
+lowercase 1 doc2.txt 1
+interacts 1 doc5.txt 1
+storing 1 doc2.txt 1
+we 5 doc3.txt 1 doc5.txt 1 doc2.txt 2 doc1.txt 2 doc8.txt 1
+many 1 doc3.txt 1
+engineering 2 doc2.txt 1 doc9.txt 1
+techniques 1 doc2.txt 1
+integration 1 doc6.txt 1
+javascript 1 doc6.txt 1
+allows 1 doc6.txt 1
+seamless 1 doc6.txt 1
+the 10 doc1.txt 1 doc10.txt 1 doc8.txt 4 doc6.txt 1 doc4.txt 1 doc7.txt 2 doc3.txt 3 doc5.txt 7 doc2.txt 3 doc9.txt 4
+converting 1 doc2.txt 1
+compilers 1 doc6.txt 1
+skill 1 doc7.txt 1
+iconic 1 doc6.txt 1
+common 1 doc3.txt 1
+algorithms 1 doc3.txt 1
+hash 1 doc3.txt 1
+achieve 1 doc3.txt 1
+platform 1 doc6.txt 1
+coding 3 doc7.txt 1 doc4.txt 1 doc8.txt 1
+environment 1 doc6.txt 1
+it 2 doc6.txt 1 doc3.txt 1
+deep 1 doc4.txt 1
+while 2 doc5.txt 1 doc3.txt 1
+usage 1 doc3.txt 1
+development 3 doc6.txt 1 doc2.txt 1 doc8.txt 5
+thought 1 doc8.txt 1
 cannot 1 doc4.txt 1
+text 1 doc4.txt 1
+are 4 doc5.txt 1 doc4.txt 1 doc3.txt 1 doc8.txt 1
+part 1 doc9.txt 1
 powers 1 doc2.txt 1
-file 1 doc2.txt 1
+structure 1 doc3.txt 5
 transform 1 doc4.txt 1
+file 1 doc2.txt 1
+information 1 doc3.txt 1
+how 4 doc5.txt 2 doc7.txt 1 doc4.txt 1 doc9.txt 1
+system 2 doc2.txt 1 doc8.txt 1
+code 1 doc4.txt 1
+practice 1 doc7.txt 1
+faster 1 doc2.txt 1
+logic 6 doc5.txt 1 doc10.txt 1 doc8.txt 1 doc7.txt 1 doc4.txt 5 doc9.txt 1
+big 1 doc2.txt 1
+and 6 doc10.txt 1 doc6.txt 2 doc4.txt 1 doc5.txt 2 doc2.txt 1 doc9.txt 1
+follows 2 doc1.txt 1 doc8.txt 1
+from 1 doc8.txt 1
+heart 1 doc1.txt 1
+final 1 doc8.txt 1
+various 1 doc2.txt 1
+without 3 doc4.txt 1 doc2.txt 1 doc9.txt 1
+often 2 doc1.txt 1 doc9.txt 1
+millions 1 doc1.txt 1
+github 1 doc9.txt 1
+overlooked 1 doc9.txt 1
+iterative 1 doc8.txt 1
 handle 3 doc10.txt 1 doc4.txt 1 doc2.txt 1
 nothing 1 doc2.txt 1
+engine 6 doc1.txt 2 doc10.txt 4 doc6.txt 1 doc4.txt 1 doc3.txt 1 doc2.txt 1
+initial 1 doc8.txt 1
+analyze 1 doc1.txt 1
+stage 1 doc8.txt 1
+between 1 doc5.txt 1
+careful 1 doc8.txt 1
+function 1 doc4.txt 1
+explains 1 doc9.txt 1
+process 2 doc1.txt 1 doc8.txt 1
+documentation 1 doc9.txt 4
 today 1 doc3.txt 1
 index 2 doc10.txt 1 doc2.txt 1
-engine 6 doc1.txt 1 doc10.txt 4 doc6.txt 1 doc4.txt 1 doc3.txt 1 doc2.txt 1
-value 1 doc9.txt 1
-projects 2 doc9.txt 1 doc2.txt 1
-is 9 doc9.txt 2 doc8.txt 1 doc1.txt 2 doc10.txt 2 doc6.txt 1 doc7.txt 1 doc3.txt 2 doc5.txt 1 doc2.txt 3
-processing 1 doc2.txt 1
-if 1 doc1.txt 1
-indexed 1 doc2.txt 1
-raw 1 doc4.txt 1
-fuel 1 doc2.txt 1
-currently 1 doc8.txt 1
-retrieval 1 doc2.txt 1
-robust 2 doc8.txt 1 doc3.txt 1
-make 1 doc2.txt 1
+never 1 doc9.txt 1
+testing 1 doc8.txt 1
+constant 1 doc3.txt 1
+reliable 1 doc6.txt 1
+lifecycle 1 doc8.txt 1
+set 1 doc1.txt 1
+software 7 doc7.txt 1 doc6.txt 1 doc4.txt 1 doc5.txt 2 doc2.txt 2 doc8.txt 3 doc9.txt 2
+learn 1 doc5.txt 1
+practices 1 doc4.txt 1
+rank 1 doc10.txt 1
+repository 1 doc9.txt 1
+recruiters 1 doc9.txt 1
+thakur 1 doc9.txt 1
+strict 1 doc8.txt 1
+most 1 doc9.txt 1
+learning 2 doc1.txt 1 doc10.txt 1
+map 1 doc3.txt 1
+you 2 doc7.txt 1 doc4.txt 2
+student 2 doc5.txt 1 doc6.txt 1
+performance 1 doc5.txt 1
+a 9 doc1.txt 3 doc10.txt 1 doc8.txt 1 doc6.txt 5 doc4.txt 2 doc7.txt 2 doc3.txt 3 doc2.txt 2 doc9.txt 1
+mini 1 doc10.txt 1
+in 4 doc4.txt 1 doc2.txt 2 doc1.txt 1 doc8.txt 1
+indexing 1 doc8.txt 1
+kiet 1 doc5.txt 1
 focuses 1 doc1.txt 1
 represents 1 doc6.txt 1
 be 3 doc1.txt 1 doc7.txt 1 doc3.txt 1
 perfect 1 doc6.txt 1
-to 8 doc9.txt 2 doc8.txt 2 doc1.txt 2 doc10.txt 2 doc4.txt 2 doc7.txt 1 doc3.txt 2 doc2.txt 4
-data 4 doc1.txt 1 doc7.txt 1 doc3.txt 1 doc2.txt 7
-used 1 doc3.txt 1
+developer 2 doc1.txt 1 doc6.txt 1
+load 1 doc2.txt 1
+removing 1 doc2.txt 1
+complexity 2 doc1.txt 1 doc3.txt 1
+any 1 doc6.txt 1
+projects 2 doc2.txt 1 doc9.txt 1
+value 1 doc9.txt 1
+processing 1 doc2.txt 1
+is 9 doc1.txt 3 doc10.txt 2 doc8.txt 1 doc6.txt 1 doc7.txt 1 doc3.txt 2 doc5.txt 1 doc2.txt 3 doc9.txt 2
+if 1 doc1.txt 1
+indexed 1 doc2.txt 1
+currently 1 doc8.txt 1
+make 1 doc2.txt 1
+retrieval 1 doc2.txt 1
+robust 2 doc3.txt 1 doc8.txt 1
+to 8 doc1.txt 1 doc10.txt 2 doc8.txt 2 doc4.txt 2 doc7.txt 1 doc3.txt 2 doc2.txt 4 doc9.txt 2
+data 3 doc7.txt 1 doc3.txt 1 doc2.txt 7
 organize 2 doc3.txt 1 doc2.txt 1
-requires 3 doc8.txt 1 doc4.txt 1 doc2.txt 1
-determines 1 doc3.txt 1
-key 2 doc9.txt 1 doc2.txt 1
+used 1 doc3.txt 1
+requires 3 doc4.txt 1 doc2.txt 1 doc8.txt 1
 implementing 1 doc4.txt 1
-an 7 doc5.txt 1 doc8.txt 1 doc1.txt 6 doc10.txt 1 doc6.txt 1 doc7.txt 1 doc3.txt 1
+key 2 doc2.txt 1 doc9.txt 1
+an 7 doc5.txt 1 doc1.txt 4 doc10.txt 1 doc8.txt 1 doc6.txt 1 doc7.txt 1 doc3.txt 1
 fail 1 doc1.txt 1
 uses 1 doc10.txt 2
 can 4 doc1.txt 1 doc4.txt 1 doc7.txt 1 doc3.txt 1
-it 2 doc6.txt 1 doc3.txt 1
-environment 1 doc6.txt 1
-must 4 doc5.txt 1 doc1.txt 1 doc10.txt 1 doc3.txt 1
-queries 1 doc10.txt 1
-important 1 doc3.txt 1
-lookup 1 doc10.txt 1
-algorithm 5 doc5.txt 1 doc1.txt 7 doc9.txt 1 doc7.txt 1 doc3.txt 2
-choice 1 doc3.txt 1
-thought 1 doc8.txt 1
-development 3 doc8.txt 5 doc6.txt 1 doc2.txt 1
-while 2 doc5.txt 1 doc3.txt 1
-usage 1 doc3.txt 1
-use 2 doc9.txt 1 doc3.txt 1
-common 1 doc3.txt 1
-iconic 1 doc6.txt 1
-algorithms 1 doc3.txt 1
-hash 1 doc3.txt 1
-achieve 1 doc3.txt 1
-physical 1 doc5.txt 1
 building 2 doc6.txt 1 doc3.txt 1
-platform 1 doc6.txt 1
-coding 3 doc8.txt 1 doc7.txt 1 doc4.txt 1
-c 3 doc10.txt 1 doc6.txt 1 doc4.txt 1
-optimize 1 doc1.txt 1
-deep 1 doc4.txt 1
-problem 1 doc1.txt 1
-terminal 1 doc6.txt 1
-of 9 doc9.txt 1 doc8.txt 2 doc1.txt 1 doc10.txt 1 doc6.txt 1 doc4.txt 1 doc7.txt 2 doc3.txt 1 doc2.txt 1
-understanding 3 doc5.txt 1 doc7.txt 1 doc4.txt 1
-fast 1 doc10.txt 1
-optimized 1 doc7.txt 1
-syntax 1 doc4.txt 1
-student 2 doc5.txt 1 doc6.txt 1
-map 1 doc3.txt 1
-you 2 doc7.txt 1 doc4.txt 2
-function 1 doc4.txt 1
-project 3 doc9.txt 1 doc10.txt 1 doc4.txt 1
+physical 1 doc5.txt 1
+fuel 1 doc2.txt 1
+project 3 doc10.txt 1 doc4.txt 1 doc9.txt 1
 when 2 doc1.txt 1 doc4.txt 1
-unixbased 1 doc6.txt 1
+optimized 2 doc1.txt 1 doc7.txt 1
+syntax 1 doc4.txt 1
+fast 1 doc10.txt 1
+for 6 doc5.txt 1 doc1.txt 2 doc10.txt 1 doc7.txt 1 doc6.txt 5 doc9.txt 1
+database 1 doc4.txt 1
+files 1 doc10.txt 1
+dsa 1 doc10.txt 1
+inverted 1 doc10.txt 1
+searchable 1 doc4.txt 1
 write 1 doc4.txt 1
+unixbased 1 doc6.txt 1
 punctuation 1 doc2.txt 1
 essentially 1 doc4.txt 1
 content 1 doc2.txt 1
 input 1 doc4.txt 1
-this 2 doc10.txt 2 doc4.txt 1
+this 3 doc1.txt 1 doc10.txt 2 doc4.txt 1
 demonstrates 1 doc4.txt 1
-text 1 doc4.txt 1
-inverted 1 doc10.txt 1
-searchable 1 doc4.txt 1
-database 1 doc4.txt 1
-across 1 doc1.txt 1
-welldesigned 1 doc1.txt 1
-good 2 doc8.txt 1 doc4.txt 1
-rank 1 doc10.txt 1
-practices 1 doc4.txt 1
-lead 1 doc4.txt 1
-our 3 doc8.txt 1 doc10.txt 2 doc2.txt 1
-clear 1 doc4.txt 1
-tool 1 doc6.txt 1
-for 6 doc5.txt 1 doc9.txt 1 doc1.txt 3 doc10.txt 1 doc7.txt 1 doc6.txt 5
 quickly 1 doc3.txt 1
 makes 1 doc6.txt 1
+important 1 doc3.txt 1
+queries 1 doc10.txt 1
+tool 1 doc6.txt 1
+c 3 doc10.txt 1 doc6.txt 1 doc4.txt 1
+clear 1 doc4.txt 1
+our 3 doc10.txt 2 doc8.txt 1 doc2.txt 1
+raw 1 doc4.txt 1
+lead 1 doc4.txt 1
+problem 1 doc1.txt 1
+understanding 3 doc5.txt 1 doc7.txt 1 doc4.txt 1
+of 9 doc1.txt 3 doc10.txt 1 doc8.txt 2 doc6.txt 1 doc4.txt 1 doc7.txt 2 doc3.txt 1 doc2.txt 1 doc9.txt 1
+terminal 1 doc6.txt 1
+algorithm 5 doc1.txt 8 doc5.txt 1 doc7.txt 1 doc3.txt 2 doc9.txt 1
+lookup 1 doc10.txt 1
+choice 1 doc3.txt 1
+welldesigned 1 doc1.txt 1
+good 2 doc4.txt 1 doc8.txt 1
 $$$DOC_DATA$$$
-doc9.txt 46
-doc8.txt 47
-doc1.txt 81
+doc1.txt 74
 doc10.txt 50
+doc8.txt 47
 doc6.txt 48
 doc4.txt 51
 doc7.txt 47
 doc3.txt 54
 doc5.txt 54
 doc2.txt 73
+doc9.txt 46
 $$$TIME_STAMPS$$$
-doc9.txt -4667253783392340847
-doc8.txt -4666137040799229243
-doc1.txt -4666137211969413322
+doc1.txt -4666136372677926472
 doc10.txt -4667369143421139526
+doc8.txt -4666136426071871437
 doc6.txt -4667369183300101741
 doc4.txt -4667369207780078541
 doc7.txt -4667369174710109881
 doc3.txt -4667369217820069024
 doc5.txt -4666137103312394113
 doc2.txt -4667369227200060131
+doc9.txt -4666136419031878679
