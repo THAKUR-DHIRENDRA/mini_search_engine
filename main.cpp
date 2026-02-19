@@ -17,10 +17,259 @@ class SearchEngine
 private:
     unordered_map<string, unordered_map<string, int>> invertedindex;
     unordered_map<string, int> doclengths;
+    unordered_map<string,fs::file_time_type>file_time_stamps;
+
+    // Elevated these variables to class members so they are persistent
+    int docCount = 0;
+    long long totalWordsAcrossAllDocs = 0; 
+
     double avgDocSize = 0; // New: To provide context for QPS
+    vector<string> newFiles;      // Files found on disk but not in index
+    vector<string> modifiedFiles; // Files with mismatched timestamps
+    vector<string> deletedFiles;  // Files in index but missing from disk
 
 //--------------------------------------------------------------------------------------------------------
-    void wordcleaner(string &word)
+    void syncfolder(string folderpath) 
+{
+    
+    cout << "[DEBUG] file_time_stamps size: " << file_time_stamps.size() << endl;
+    for(auto& [name, time] : file_time_stamps) 
+        cout << "[DEBUG] Stamp loaded: " << name << endl;
+    
+    unordered_map<string,fs::file_time_type>foldermap;
+
+    //pushing folder file and their time into foldermap map
+    for(const auto& file : fs::directory_iterator(folderpath))
+    {
+        if (file.is_regular_file()) 
+        {
+            string name=file.path().filename().string();
+            fs::file_time_type time=fs::last_write_time(file.path());
+            foldermap[name]=time;
+        }
+    }
+
+    //now comparing foldermap to file_time_stamps to get new, modified files
+    for(const auto& iterator:foldermap)
+    {
+        if(file_time_stamps.find(iterator.first)==file_time_stamps.end())
+        {
+           //pushing filename into the newfile vector
+            newFiles.emplace_back(iterator.first);
+        }
+        else
+        {
+            if(iterator.second!=file_time_stamps[iterator.first])
+            {
+                //pushing file name into modifiedfiles vector if time stamps does not match
+                modifiedFiles.emplace_back(iterator.first);
+            }
+        }
+    }
+
+    //comparing file_time_stamps to folder map to get deleted files
+    for(const auto& iterator:file_time_stamps)
+    {
+        if(foldermap.find(iterator.first)==foldermap.end())
+        {
+            //pushing files that are deleted from folder but are present in index file
+            deletedFiles.emplace_back(iterator.first);
+        }
+    }
+
+
+
+    cout << "[DEBUG] New: " << newFiles.size() << endl;
+    cout << "[DEBUG] Modified: " << modifiedFiles.size() << endl;
+    cout << "[DEBUG] Deleted: " << deletedFiles.size() << endl;
+    for(auto& f : deletedFiles) cout << "[DEBUG] Will delete: " << f << endl;
+
+
+
+
+    
+
+    // Set a flag BEFORE we pop the vectors, otherwise it won't save!
+    bool isDirty = (!newFiles.empty() || !deletedFiles.empty() || !modifiedFiles.empty());
+
+    //now performing operation on stored files in new modidied and deleted
+    for(int i=newFiles.size()-1;i>=0;i--)
+        {
+            indexfile(folderpath,newFiles[i]);
+            newFiles.pop_back();
+        }
+
+    for(int i=deletedFiles.size()-1;i>=0;i--)
+        {
+            scrubfile(deletedFiles[i]);
+            deletedFiles.pop_back();
+        }
+
+    for(int i=modifiedFiles.size()-1;i>=0;i--)
+        {
+            scrubfile(modifiedFiles[i]);
+            indexfile(folderpath,modifiedFiles[i]);
+            modifiedFiles.pop_back();
+        }
+
+    // Save state after sync is done using the flag
+    if(isDirty) {
+        map_to_file(); 
+        cout << "[SYSTEM] Incremental sync completed. Index updated." << endl;
+    }
+}
+//--------------------------------------------------------------------------------------------------------
+
+void indexfile(string folderpath,string filename)
+{
+    string filepath=folderpath+"/"+filename;
+    ifstream reader(filepath); 
+    if(!reader.is_open())
+        cout<<filename<<" could not be opened while performing indexfile function"<<endl;
+    else
+    {
+        string line;
+        int count = 0; 
+
+        while(getline(reader,line))
+            {
+                string word;
+                stringstream ss(line);
+                while(ss >> word) 
+                {
+                    wordcleaner(word);
+                    tolowercase(word);
+                    if (!word.empty())
+                    {
+                        count++;
+                        invertedindex[word][filename]++;
+                    }
+                }
+            }
+        file_time_stamps[filename]=fs::last_write_time(filepath); 
+        doclengths[filename] = count;
+        totalWordsAcrossAllDocs += count; 
+        docCount++; 
+        reader.close();
+    }
+
+}
+//--------------------------------------------------------------------------------------------------------
+
+void scrubfile(string filename)
+{
+    // Subtracting from the global tracking variables BEFORE deleting metadata
+    if(doclengths.find(filename) != doclengths.end()) {
+        totalWordsAcrossAllDocs -= doclengths[filename];
+        docCount--;
+        doclengths.erase(filename);
+        file_time_stamps.erase(filename);
+    }
+
+    //therefore we are using traditional loop 
+    for(auto it=invertedindex.begin(); it!=invertedindex.end(); ) 
+        {
+            //Delete the file from the inner map. 
+           it->second.erase(filename);
+
+            //Check if this keyword now has zero files associated with it.
+            if(it->second.empty())
+            {
+                it = invertedindex.erase(it); 
+            }
+            else
+                //manually increasing it when it 
+                ++it;
+        }
+}
+
+//--------------------------------------------------------------------------------------------------------
+    //saving into file
+    void map_to_file()
+    {
+         ofstream writer("index.txt");
+        if(!writer.is_open())
+            cout<<"index.txt file could not be opened while performing save to files function"<<endl;
+        else
+        {
+            //inserting keyword count filename frequency
+            for(const auto& outermap:invertedindex)
+                {
+                    writer<<outermap.first<<" "<<outermap.second.size();
+                    for(const auto& innermap:outermap.second)
+                        {
+                            writer<<" "<<innermap.first<<" "<<innermap.second;
+                        }
+                    writer<<endl;
+                }
+            //now inserting sentinel logic word $$$DOC_DATA$$$
+            writer<<"$$$DOC_DATA$$$"<<endl;
+            //inserting doclengths [filename totalwords] in it
+            for(const auto&[name,length]:doclengths)
+                {
+                    writer<<name<<" "<<length<<endl;
+                }
+
+            //now inserting sentinel logic $$$TIME_STAMPS$$$
+            writer<<"$$$TIME_STAMPS$$$"<<endl;
+            //now inserting the file with timestamps
+            for(const auto&[name,time]:file_time_stamps)
+                writer<<name<<" "<<time.time_since_epoch().count()<<endl;
+        }
+        writer.close();
+    }
+
+//--------------------------------------------------------------------------------------------------------
+    //now this function loads files data to unordered_map both inverted index and doclengths
+    void file_to_map()
+    {
+        ifstream reader("index.txt");
+        if(!reader.is_open())
+            cout<<"The index.txt file could not be opened while perfoming load to map function"<<endl;
+        else
+        {
+            string word;
+            while(reader>>word)
+                {
+                    if(word=="$$$DOC_DATA$$$")
+                        break;
+                    int relatedfiles;
+                    reader>>relatedfiles;
+                    for(int i=0;i<relatedfiles;i++)
+                        {
+                            int frequency;
+                            string filename;
+                            reader>>filename>>frequency;
+                            invertedindex[word][filename]=frequency;
+                        }
+                }
+
+            // FIX APPLIED HERE: Read string first, check for break condition, THEN read integer.
+            string filename;
+            while(reader >> filename) {
+                if(filename == "$$$TIME_STAMPS$$$") {
+                    break; 
+                }
+                int totalwords;
+                reader >> totalwords;
+
+                doclengths[filename]=totalwords;
+                totalWordsAcrossAllDocs += totalwords; 
+                docCount++; 
+            }
+
+            // Load timestamps to avoid syncing bugs
+            long long time_count;
+            while(reader >> filename >> time_count) {
+                file_time_stamps[filename] = fs::file_time_type{fs::file_time_type::duration(time_count)};
+            }
+        }
+        reader.close();
+    }
+
+
+//--------------------------------------------------------------------------------------------------------
+  void wordcleaner(string &word)
     {
         string cleaned = "";
         for (char ch : word)
@@ -36,70 +285,7 @@ private:
         transform(word.begin(), word.end(), word.begin(), ::tolower);
     }
 
-//--------------------------------------------------------------------------------------------------------
-    //saving into file
-void map_to_file()
-{
-     ofstream writer("index.txt");
-    if(!writer.is_open())
-        cout<<"index.txt file could not be opened while performing save to files function"<<endl;
-    else
-    {
-        
-        //inserting keyword count filename frequency
-        for(const auto& outermap:invertedindex)
-            {
-                writer<<outermap.first<<" "<<outermap.second.size();
-                for(const auto& innermap:outermap.second)
-                    {
-                        writer<<" "<<innermap.first<<" "<<innermap.second;
-                    }
-                writer<<endl;
-            }
-        //now inserting sentinel logic word $$$DOC_DATA$$$
-        writer<<"$$$DOC_DATA$$$"<<endl;
-        //inserting doclengths [filename totalwords] in it
-        for(const auto& dt:doclengths)
-            {
-                writer<<dt.first<<" "<<dt.second<<endl;
-            }
-    }
-    writer.close();
-}
 
-//--------------------------------------------------------------------------------------------------------
-//now this function loads files data to unordered_map both inverted index and doclengths
-void file_to_map()
-{
-    ifstream reader("index.txt");
-    if(!reader.is_open())
-        cout<<"The index.txt file could not be opened while perfoming load to map function"<<endl;
-    else
-    {
-        string word;
-        while(reader>>word)
-            {
-                if(word=="$$$DOC_DATA$$$")
-                    break;
-                int relatedfiles;
-                reader>>relatedfiles;
-                for(int i=0;i<relatedfiles;i++)
-                    {
-                        int frequency;
-                        string filename;
-                        reader>>filename>>frequency;
-                        invertedindex[word][filename]=frequency;
-                    }
-            }
-        
-        //now move to build doclength map
-        string filename;
-        int totalwords;
-        while(reader>>filename>>totalwords)
-        doclengths[filename]=totalwords;
-    }
-    reader.close();
-}
 //--------------------------------------------------------------------------------------------------------
 public:
     SearchEngine(string folderpath)
@@ -109,47 +295,25 @@ public:
         {
             cout << "[SYSTEM] Index found. Loading from disk..." << endl;
             file_to_map();
-            double total = 0;
-            for (auto const& [name, len] : doclengths) 
-                total += len;
-            if (!doclengths.empty()) 
-                avgDocSize = total / doclengths.size();
+
+            cout << "[SYSTEM] Checking for new, modified, or deleted files..." << endl;
+            syncfolder(folderpath); 
+
+            if (docCount > 0) 
+                avgDocSize = (double)totalWordsAcrossAllDocs / docCount;
         }
         else
         {
             cout << "[SYSTEM] No index. Building from folder: " << folderpath << endl;
-            int totalWordsAcrossAllDocs = 0;
-            int docCount = 0;
+
             for (const auto &file : fs::directory_iterator(folderpath))
             {
-                ifstream reader(file.path());
-                if (!reader.is_open())
-                    continue;
-
-                string filename = file.path().filename().string();
-                string line;
-                int count = 0;
-                while (getline(reader, line))
-                {
-                    string word;
-                    stringstream ss(line);
-                    while (ss >> word)
-                    {
-                        wordcleaner(word);
-                        tolowercase(word);
-                        if (!word.empty())
-                        {
-                            count++;
-                            invertedindex[word][filename]++;
-                        }
-                    }
+                if (file.is_regular_file()) {
+                    string filename = file.path().filename().string();
+                    indexfile(folderpath, filename); 
                 }
-                doclengths[filename] = count;
-                totalWordsAcrossAllDocs += count;
-                docCount++;
-                reader.close();
-                
             }
+
             if (docCount > 0) 
                 avgDocSize = (double)totalWordsAcrossAllDocs / docCount;
             map_to_file();
@@ -165,7 +329,7 @@ public:
     // Getter for Result Analysis
     double getAvgDocSize() 
     { 
-    return avgDocSize; 
+        return avgDocSize; 
     }
     int getIndexSize() 
     { 
@@ -189,8 +353,7 @@ public:
                     double totalfiles = doclengths.size();
                     double relatedfiles = it->second.size();
                     double frequency = fileEntry.second;
-                    // 1. Force double precision by using double variables (which you've done)
-                    // 2. Add +1.0 Smoothing to IDF to prevent 0.0 results
+
                     double TF = frequency / totalword;
                     double IDF = log10(totalfiles / relatedfiles) + 1.0; 
 
@@ -277,12 +440,11 @@ public:
         auto end = std::chrono::steady_clock::now();
 
         auto total_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        if (total_ms == 0) return -1; 
         return (double)stressIterations / (total_ms / 1000.0);
     }
 //--------------------------------------------------------------------------------------------------------
     void runAllTests(SearchEngine& myEngine) {
-        // 
-
         cout << "\n=================================================" << endl;
         cout << "       SEARCH ENGINE SYSTEM REPORT (PHASE 8)     " << endl;
         cout << "=================================================" << endl;
@@ -316,28 +478,21 @@ public:
 
 int main()
 {
-    // 1. Initialize the engine (automatically runs mapbuilder)
     SearchEngine myEngine("txt_files");
-    //calling tester master function
     EngineTester tester;
     tester.runAllTests(myEngine);
-    
+
     string query;
     cout << "Enter search key: ";
     cin >> query;
 
-    // 2. Use the engine to get ranked results
     auto results = myEngine.search(query);
 
-    // 3. Display the results
     if (!results.empty())
     {
         int rank = 1;
-        // Change this part in main()
         for (const auto &res : results)
         {
-            // Adding fixed and setprecision shows the tiny decimals 
-            // that are currently being hidden as '0'
             cout << "Rank " << rank++ << ": " << res.first 
                  << " (Score: " << fixed << setprecision(8) << res.second << ")" << endl;
         }
