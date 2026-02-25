@@ -1,4 +1,4 @@
-run = "g++ -std=c++17 main.cpp -o main && ./main"
+run = "g++ -std=c++17 -lpthread main.cpp -o main && ./main"
 
 [agent]
 expertMode = true
@@ -21,7 +21,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd /home/runner/workspace && g++ -std=c++17 -o main main.cpp && ./main"
+args = "cd /home/runner/workspace && g++ -std=c++17 -lpthread -o main main.cpp && ./main"
 
 [workflows.workflow.metadata]
 outputType = "console"

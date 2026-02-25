@@ -1,1 +1,0 @@
-Coding in C++ requires a deep understanding of logic and syntax. When you write code, you are essentially implementing logic to handle user input. This project demonstrates how logic can transform raw text into a searchable database. Good logic practices lead to better software. Without clear logic, the engine cannot function.

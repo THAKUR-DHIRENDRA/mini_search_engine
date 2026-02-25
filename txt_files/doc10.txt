@@ -1,1 +1,0 @@
-Our goal is to build a mini search engine that uses an inverted index for fast lookup. This search engine uses TF-IDF logic to rank files by relevance. Every search engine must handle user queries efficiently. This search engine project is the culmination of our DSA and C++ learning journey.

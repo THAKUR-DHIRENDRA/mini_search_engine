@@ -1,1 +1,0 @@
-A data structure is used to organize information so an algorithm can access it quickly. While the algorithm is important, the choice of structure determines the memory usage. Many common algorithms use a hash map structure to achieve constant time complexity. We are building a search engine structure today. Every structure must be robust.

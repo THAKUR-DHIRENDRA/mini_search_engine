@@ -8,10 +8,23 @@
 #include <string>
 #include <chrono>
 #include <iomanip>
+#include <thread>
+#include <functional>
 
 using namespace std;
 namespace fs = std::filesystem;
+//--------------------------------------------------------------------------------------------------------
 
+struct ThreadResult
+{
+    unordered_map<string,int>local_lengths;
+    unordered_map<string,fs::file_time_type>local_stamps;
+    unordered_map<string,unordered_map<string,int>>local_index;
+    int local_doccount=0;
+    long long local_total_words=0;
+};
+
+//--------------------------------------------------------------------------------------------------------
 class SearchEngine
 {
 private:
@@ -27,6 +40,95 @@ private:
     vector<string> newFiles;      // Files found on disk but not in index
     vector<string> modifiedFiles; // Files with mismatched timestamps
     vector<string> deletedFiles;  // Files in index but missing from disk
+//--------------------------------------------------------------------------------------------------------
+    void ThreadIndexer(string folderpath,vector<string>&files,int start,int end,ThreadResult& result)
+    {
+        for(int i=start;i<end;i++)
+            {
+                string filepath=folderpath+"/"+files[i];
+                ifstream reader(filepath); 
+                if(!reader.is_open())
+                    cout<<files[i]<<" could not be opened while performing indexfile function"<<endl;
+                else
+                {
+                    string line;
+                    int count = 0; 
+
+                    while(getline(reader,line))
+                    {
+                        string word;
+                        stringstream ss(line);
+                        while(ss >> word) 
+                        {
+                            wordcleaner(word);
+                            tolowercase(word);
+                            if (!word.empty())
+                            {
+                                count++;
+                                result.local_index[word][files[i]]++;
+                            }
+                        }
+                    }
+                    result.local_stamps[files[i]]=fs::last_write_time(filepath); 
+                    result.local_lengths[files[i]] = count;
+                    result.local_total_words+= count; 
+                    result.local_doccount++; 
+                    reader.close();
+                }
+            }
+    }
+//--------------------------------------------------------------------------------------------------------
+
+void ThreadMerger(vector<ThreadResult>&results)
+{
+    for(const auto& it:results)
+    {
+        //writing into global doclength map
+        for(const auto&[name,length]:it.local_lengths)
+        {
+            doclengths[name]=length;
+        }
+
+        //writing into global timestamps map
+        for(const auto& [name,time]:it.local_stamps)
+        {
+            file_time_stamps[name]=time;
+        }
+
+         //writing into global invertedindex map
+        for(const auto& outermap:it.local_index)
+        {
+            for(const auto&[name,freq]:outermap.second)
+                {
+                    invertedindex[outermap.first][name]+=freq;
+                }
+        }
+
+        docCount+=it.local_doccount;
+        totalWordsAcrossAllDocs+=it.local_total_words;
+    }
+}
+//--------------------------------------------------------------------------------------------------------
+void thread_master_control(vector<string>&files,string folderpath)
+{
+    int threadcount =(int)min(thread::hardware_concurrency(), (unsigned int)files.size());
+    //type casted above as hardware concurrency returns unsigned int but files.size() returns size_t.
+    int chunksize=files.size()/threadcount;
+    int remainder=files.size()%threadcount;
+    vector<ThreadResult>results(threadcount);
+    int start=0;
+    vector<thread>Threads;
+    for(int i=0;i<threadcount;i++)
+    {
+       int end= start+chunksize+(i < remainder ? 1 : 0);
+        Threads.emplace_back(&SearchEngine::ThreadIndexer,this,folderpath,ref(files),start,end,ref(results[i]));
+        start=end;
+    }
+
+    for(auto& t:Threads)
+        t.join();
+    ThreadMerger(results);
+}
 
 //--------------------------------------------------------------------------------------------------------
     void syncfolder(string folderpath) 
@@ -74,24 +176,24 @@ private:
 
         // Report detected changes
         if (!newFiles.empty()) {
-            cout << "[SYNC] New files detected (" << newFiles.size() << "): ";
-            for (const auto& f : newFiles) cout << f << " ";
+            cout << "[SYNC] New files detected (" << newFiles.size() << "): "<<endl;
+            for (const auto& f : newFiles) cout << f <<" "<<endl;
             cout << endl;
         }
         if (!modifiedFiles.empty()) {
             cout << "[SYNC] Modified files detected (" << modifiedFiles.size() << "): ";
-            for (const auto& f : modifiedFiles) cout << f << " ";
+            for (const auto& f : modifiedFiles) cout << f << " "<<endl;
             cout << endl;
         }
         if (!deletedFiles.empty()) {
             cout << "[SYNC] Deleted files detected (" << deletedFiles.size() << "): ";
-            for (const auto& f : deletedFiles) cout << f << " ";
+            for (const auto& f : deletedFiles) cout << f << " "<<endl;
             cout << endl;
         }
         if (newFiles.empty() && modifiedFiles.empty() && deletedFiles.empty())
             cout << "[SYNC] No changes detected. Index is up to date." << endl;
 
-        
+
         // Set a flag BEFORE we pop the vectors, otherwise it won't save!
         bool isDirty = (!newFiles.empty() || !deletedFiles.empty() || !modifiedFiles.empty());
 
@@ -198,74 +300,85 @@ private:
         else
         {
             //inserting keyword count filename frequency
-            for(const auto& outermap:invertedindex)
+            for(const auto& outermap : invertedindex)
             {
-                writer<<outermap.first<<" "<<outermap.second.size();
-                for(const auto& innermap:outermap.second)
-                {
-                    writer<<" "<<innermap.first<<" "<<innermap.second;
-                }
-                writer<<endl;
+                writer << outermap.first << "|" << outermap.second.size() << "\n";
+                for(const auto& innermap : outermap.second)
+                    writer << innermap.first << "|" << innermap.second << "\n";
             }
             //now inserting sentinel logic word $$$DOC_DATA$$$
             writer<<"$$$DOC_DATA$$$"<<endl;
-            //inserting doclengths [filename totalwords] in it
+            //inserting doclengths [filename|totalwords] using | delimiter to handle spaces in filenames
             for(const auto&[name,length]:doclengths)
             {
-                writer<<name<<" "<<length<<endl;
+                writer<<name<<"|"<<length<<endl;
             }
 
             //now inserting sentinel logic $$$TIME_STAMPS$$$
             writer<<"$$$TIME_STAMPS$$$"<<endl;
-            //now inserting the file with timestamps
+            //now inserting the file with timestamps using | delimiter to handle spaces in filenames
             for(const auto&[name,time]:file_time_stamps)
-                writer<<name<<" "<<time.time_since_epoch().count()<<endl;
+                writer<<name<<"|"<<time.time_since_epoch().count()<<endl;
         }
         writer.close();
     }
 //--------------------------------------------------------------------------------------------------------
     //now this function loads files data to unordered_map both inverted index and doclengths
-    void file_to_map()
+void file_to_map()
+{
+    ifstream reader("index.txt");
+    if(!reader.is_open())
+        cout<<"The index.txt file could not be opened while performing load to map function"<<endl;
+    else
     {
-        ifstream reader("index.txt");
-        if(!reader.is_open())
-            cout<<"The index.txt file could not be opened while performing load to map function"<<endl;
-        else
+        string line;
+        while(getline(reader, line))
         {
-            string word;
-            while(reader>>word)
+            if(line == "$$$DOC_DATA$$$") break;
+
+            // this line is word|filecount
+            size_t delimiter = line.rfind('|');
+            if(delimiter == string::npos) continue;
+            string word = line.substr(0, delimiter);
+            int relatedfiles = stoi(line.substr(delimiter + 1));
+
+            // next relatedfiles lines are each filename|frequency
+            for(int i = 0; i < relatedfiles; i++)
             {
-                if(word=="$$$DOC_DATA$$$")
-                    break;
-                int relatedfiles;
-                reader>>relatedfiles;
-                for(int i=0;i<relatedfiles;i++)
-                {
-                    int frequency;
-                    string filename;
-                    reader>>filename>>frequency;
-                    invertedindex[word][filename]=frequency;
-                }
-            }
-
-            string filename;
-            while(reader >> filename) {
-                if(filename == "$$$TIME_STAMPS$$$") break;
-                int totalwords;
-                reader >> totalwords;
-                doclengths[filename]=totalwords;
-                totalWordsAcrossAllDocs += totalwords;
-                docCount++;
-            }
-
-            // Load timestamps to avoid syncing bugs
-            long long time_count;
-            while(reader >> filename >> time_count) {
-                file_time_stamps[filename] = fs::file_time_type{fs::file_time_type::duration(time_count)};
+                getline(reader, line);
+                size_t delim = line.rfind('|');
+                if(delim == string::npos) continue;
+                string filename = line.substr(0, delim);
+                int frequency = stoi(line.substr(delim + 1));
+                invertedindex[word][filename] = frequency;
             }
         }
-        reader.close();
+
+        // loading doclengths — each line is filename|totalwords
+        while(getline(reader, line))
+        {
+            if(line == "$$$TIME_STAMPS$$$") break;
+            size_t delimiter = line.rfind('|');
+            if(delimiter == string::npos) continue;
+            string filename = line.substr(0, delimiter);
+            int totalwords = stoi(line.substr(delimiter + 1));
+            doclengths[filename] = totalwords;
+            totalWordsAcrossAllDocs += totalwords;
+            docCount++;
+        }
+
+        // Load timestamps to avoid syncing bugs — each line is filename|timestamp
+        while(getline(reader, line))
+        {
+            size_t delimiter = line.rfind('|');
+            if(delimiter == string::npos) continue;
+            string filename = line.substr(0, delimiter);
+            long long time_count = stoll(line.substr(delimiter + 1));
+            file_time_stamps[filename] = fs::file_time_type{fs::file_time_type::duration(time_count)};
+        }
     }
+    reader.close();
+}
 //--------------------------------------------------------------------------------------------------------
     void wordcleaner(string &word)
     {
@@ -302,15 +415,24 @@ public:
         else
         {
             cout << "[SYSTEM] No index. Building from folder: " << folderpath << endl;
-
+            vector<string>files;
             for (const auto &file : fs::directory_iterator(folderpath))
             {
                 if (file.is_regular_file()) {
                     string filename = file.path().filename().string();
-                    indexfile(folderpath, filename); 
+                    files.emplace_back(filename);
                 }
             }
-
+            auto mt_start = chrono::steady_clock::now();
+            thread_master_control(files, folderpath);
+            cout << "[DEBUG] invertedindex size: " << invertedindex.size() << endl;
+            cout << "[DEBUG] docCount: " << docCount << endl;
+            cout << "[DEBUG] timestamps: " << file_time_stamps.size() << endl;
+            auto mt_end = chrono::steady_clock::now();
+            cout << "[MT] Indexed " << files.size() << " files using " 
+                 << thread::hardware_concurrency() << " threads in "
+                 << chrono::duration_cast<chrono::milliseconds>(mt_end - mt_start).count() 
+                 << " ms" << endl;
             if (docCount > 0) 
                 avgDocSize = (double)totalWordsAcrossAllDocs / docCount;
             map_to_file();
@@ -369,20 +491,28 @@ public:
 class EngineTester
 {
 public:
-    vector<pair<string,string>>testdata=
-    {
-        {"algorithm","doc1.txt"}, 
-        {"data","doc2.txt"},
-        {"logic","doc4.txt"},
-        {"software","doc8.txt"},
-        {"macbook","doc6.txt"},
-        {"leetcode","doc7.txt"},
-        {"engine","doc10.txt"},
-        {"", ""}, {"alpha", ""}, {"", "beta"}, {"   ", "   "}, {"TEST", "test"},
-        {"123", "456"}, {"@#$%", "^&*()"}, {"hello!!!", "world??"},
-        {"longstringlongstringlongstring", ""}, {"mix3d", "str1ng"},
-        {"重复", "数据"}, {"NULL", "nullptr"}, {"end", ""}   
-    };
+vector<pair<string,string>>testdata=
+{
+    // Accuracy test cases — distinctive words pointing to specific books
+    {"raskolnikov", "Crime and Punishment by Fyodor Dostoyevsky.txt"},
+    {"gatsby",      "The Great Gatsby by F. Scott Fitzgerald.txt"},
+    {"jekyll",      "The strange case of Dr. Jekyll and Mr. Hyde.txt"},
+    {"whale",       "Moby Dick; Or, The Whale.txt"},
+    {"dorian",      "The Picture of Dorian Gray by Oscar Wilde.txt"},
+    {"juliet",      "Romeo and Juliet.txt"},
+    {"alice",       "Alice's Adventures in Wonderland by Lewis Carroll.txt"},
+
+    // Edge case test cases — guaranteed to never exist in any book
+    {"", ""},
+    {"xqzjwk", ""},
+    {"zzzzzzzzz", ""},
+    {"@#$%", ""},
+    {"   ", ""},
+    {"aaa111bbb", ""},
+    {"x1q2z3w4", ""},
+    {"qqqqqqqqqq", ""},
+    {"zxqwjvk", ""}
+};
 //--------------------------------------------------------------------------------------------------------
     bool testAccuracy(SearchEngine& myEngine)
     {
@@ -442,7 +572,7 @@ public:
 //--------------------------------------------------------------------------------------------------------
     void runAllTests(SearchEngine& myEngine) {
         cout << "\n=================================================" << endl;
-        cout << "       SEARCH ENGINE SYSTEM REPORT (PHASE 8)     " << endl;
+        cout << "       SEARCH ENGINE SYSTEM REPORT (PHASE 12)    " << endl;
         cout << "=================================================" << endl;
 
         // 1. Result Analysis (The "Why")
@@ -478,23 +608,28 @@ int main()
     tester.runAllTests(myEngine);
 
     string query;
-    cout << "Enter search key: ";
-    cin >> query;
-
-    auto results = myEngine.search(query);
-
-    if (!results.empty())
+    while(true)
     {
-        int rank = 1;
-        for (const auto &res : results)
+        cout << "Enter search key (or 'exit' to quit): ";
+        cin >> query;
+
+        if(query == "exit") break;
+
+        auto results = myEngine.search(query);
+
+        if (!results.empty())
         {
-            cout << "Rank " << rank++ << ": " << res.first 
-                 << " (Score: " << fixed << setprecision(8) << res.second << ")" << endl;
+            int rank = 1;
+            for (const auto &res : results)
+            {
+                cout << "Rank " << rank++ << ": " << res.first 
+                     << " (Score: " << fixed << setprecision(8) << res.second << ")" << endl;
+            }
         }
-    }
-    else
-    {
-        cout << "No results found for '" << query << "'" << endl;
+        else
+        {
+            cout << "No results found for '" << query << "'" << endl;
+        }
     }
 
     return 0;
