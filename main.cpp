@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <thread>
 #include <functional>
+#include <unordered_set>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -31,6 +32,7 @@ private:
     unordered_map<string, unordered_map<string, int>> invertedindex;
     unordered_map<string, int> doclengths;
     unordered_map<string,fs::file_time_type>file_time_stamps;
+    unordered_set<string>stopwords;
 
     // Elevated these variables to class members so they are persistent
     int docCount = 0;
@@ -64,8 +66,11 @@ private:
                             tolowercase(word);
                             if (!word.empty())
                             {
-                                count++;
-                                result.local_index[word][files[i]]++;
+                                if(stopwords.find(word)==stopwords.end())
+                                {
+                                    count++;
+                                    result.local_index[word][files[i]]++;
+                                }
                             }
                         }
                     }
@@ -416,6 +421,7 @@ public:
         {
             cout << "[SYSTEM] No index. Building from folder: " << folderpath << endl;
             vector<string>files;
+            //pushing filesname into files vector from the folder
             for (const auto &file : fs::directory_iterator(folderpath))
             {
                 if (file.is_regular_file()) {
@@ -423,6 +429,27 @@ public:
                     files.emplace_back(filename);
                 }
             }
+
+            //pushing stopwords from file into set
+            if(!fs::exists("stopwords.txt"))
+            {
+                cout<<"stopwords file could not be openend while pushing words from file into stopwords                 set"<<endl;
+            }
+            else
+            {
+                ifstream reader("stopwords.txt");
+                string line;
+                while(getline(reader,line))
+                {
+                    string word;
+                    stringstream ss(line);
+                    while(ss>>word)
+                    {
+                        stopwords.emplace(word);
+                    }
+                }
+            }
+            
             auto mt_start = chrono::steady_clock::now();
             thread_master_control(files, folderpath);
             cout << "[DEBUG] invertedindex size: " << invertedindex.size() << endl;
